@@ -1,0 +1,22 @@
+ion-item{
+    font-size: 0.7rem;
+    ion-thumbnail{
+        height: 16vh;
+        width: 16vh;
+        img{
+            object-fit:contain;
+        }
+    }
+    h4{
+        font-size: 1rem;
+    }
+    p{
+        font-size: 0.7rem;
+        font-weight: lighter;
+    }
+}
+
+.distance{
+    font-size: 0.8rem;
+    padding-top: 0.2vh;
+}

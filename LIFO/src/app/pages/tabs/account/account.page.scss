@@ -1,0 +1,21 @@
+ion-items{
+    margin-left: 2vw;
+    ion-label{
+        font-size: 0.95rem;
+    }
+}
+p{
+    font-weight: lighter;
+    font-size: 0.7rem;
+}
+ion-note{
+    font-size: 0.87rem;
+    ion-icon{
+        float:right;
+        margin-top: 0.1rem;
+        padding-left: 0.2rem;
+    }
+}
+.alignSpinner{
+    transform: translateY(40vh);
+}

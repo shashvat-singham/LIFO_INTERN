@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-title>My Account</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="logout()">
+        <ion-icon name="power-outline" color="light" slot="icon-only" ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div *ngIf="isLoading" class="ion-text-center alignSpinner">
+    <ion-spinner color="crescent"></ion-spinner>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <ion-list>
+      <ion-item lines="full">
+        <ion-button slot="end" fill="clear">EDIT</ion-button>
+        <ion-label>
+          <ion-text class="ion-text-uppercase"><h4>{{user?.name}}</h4></ion-text>
+          <p>{{user.phone}} | {{user.email}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header>
+        <ion-label color="primary">PAST ORDERS</ion-label>
+      </ion-list-header>
+      <ion-text class="ion-text-center" *ngIf="!orderList || orderList.length == 0"><p>No orders placed yet</p></ion-text>
+      <app-orders 
+      *ngFor="let order of orderList" [order]="order" (reorder)="reorder($event)" (help)="getHelp($event)">
+    </app-orders>
+
+    </ion-list>
+  </ng-container>
+</ion-content>

@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Signup</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+<form #f1="ngForm" (ngSubmit)="onSubmit(f1)" class="margin-bottom">
+  <ion-list lines="none">
+
+    <ion-item color="light" class="ion-margin-bottom">
+      <ion-icon name="person" slot="start" color="primary"></ion-icon>
+      <ion-input
+        type="text"
+        name="name"
+        ngModel
+        #userCtrl="ngModel"
+        placeholder="Name"
+        required>
+      </ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="!userCtrl.valid && userCtrl.touched">
+      <p class="errMsg">*Please enter a valid name.</p>
+    </ion-text>
+
+    <ion-item color="light" class="ion-margin-bottom">
+      <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+      <ion-input
+        type="text"
+        name="phone"
+        ngModel
+        #phoneCtrl="ngModel"
+        placeholder="Phone Number"
+        minlength="10"
+        maxlength="11"
+        required>
+      </ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="!phoneCtrl.valid && phoneCtrl.touched">
+      <p class="errMsg">*Please enter a valid phone number.</p>
+    </ion-text>
+
+    <ion-item color="light" class="ion-margin-bottom">
+      <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+      <ion-input
+        type="email"
+        name="email"
+        ngModel
+        email
+        #emailCtrl="ngModel"
+        placeholder="Email"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-text color="danger" *ngIf="!emailCtrl.valid && emailCtrl.touched">
+      <p class="errMsg">*Please enter a valid Email ID.</p>
+    </ion-text>
+
+    <ion-item color="light" class="ion-margin-bottom">
+      <ion-icon name="key" slot="start" color="primary"></ion-icon>
+      <ion-icon [name]="type ? 'eye-outline' : 'eye-off-outline' " slot="end" color="primary" (click)="changeType()"></ion-icon>
+      <ion-input
+        [type]="type ? 'password' : 'text'"
+        name="password"
+        ngModel
+        #passwordCtrl="ngModel"
+        placeholder="Password"
+        required
+        minlength="8">
+      </ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="!passwordCtrl.valid && passwordCtrl.touched">
+      <p class="errMsg">*Password must be 8 characters long.</p>
+    </ion-text>
+  </ion-list>
+  <ion-button 
+    expand="block" 
+    shape="round" 
+    type="submit" 
+    color="primary">SIGN UP</ion-button>
+    <!-- <ion-button 
+    expand="block"  
+    
+    shape="round" 
+    color="primary">
+    <ion-spinner name="crescent"></ion-spinner>
+  </ion-button> -->
+</form>
+<ion-text color="primary" class="ion-text-center" routerLink="/login">
+  <p class="ion-margin-top ">Have an account? <b><u>Sign in</u></b></p>
+</ion-text>
+
+</ion-content>

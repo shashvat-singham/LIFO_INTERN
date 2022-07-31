@@ -1,0 +1,49 @@
+ion-img{
+    object-fit:contain;
+    border-radius: 2px;
+}
+ion-input{
+    font-size: 0.8rem;
+}
+h4{
+    font-size: 1.2rem;
+}
+p{
+    font-size: 0.7rem;
+}
+.quantity{
+    width: 2rem;      
+}
+.price{
+    width: 3.5rem;
+}
+ion-item{
+    letter-spacing: 0.5px;
+    ion-text{
+        font-size: 0.8rem;
+    }
+    ion-label{
+        font-size: 0.8rem;
+    }
+    ion-row{
+        border: 1px solid var(--ion-color-medium);
+        border-radius: 2px;
+        padding: 0.3rem;
+    }
+}
+
+ion-footer{
+    ion-text, p{
+        font-size: 0.7rem;
+        font-weight: lighter;
+    }
+    ion-col{
+        ion-label{
+            margin-left: 10px;
+        }
+    }
+}
+
+.colStyle{
+    background-color: var(--ion-color-success);
+}

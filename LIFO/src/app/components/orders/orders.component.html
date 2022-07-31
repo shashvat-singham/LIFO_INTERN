@@ -1,0 +1,30 @@
+<ion-item-group >
+  <ion-item>
+    <ion-label>
+      <h3>{{order?.restaurant?.name}}</h3>
+      <p>{{order?.restaurant?.address}} | {{order?.restaurant?.phone}}</p>
+      <ion-text><p>Rs.{{order?.grandTotal}}<ion-icon name="chevron-forward-outline"></ion-icon></p></ion-text>
+    </ion-label>
+    <ion-note slot="end" color="dark">
+      {{order?.status}}
+      <ion-icon *ngIf="order?.status == 'Picked Up'" name="checkmark-circle-outline" color="success"></ion-icon>
+      <ion-icon *ngIf="order?.status != 'Picked Up'" name="alert-circle-outline" color="danger"></ion-icon>
+    </ion-note>
+  </ion-item>
+  <ion-item lines="none" class="borderBottom">
+    <ion-label>
+      <ion-text color="dark" *ngFor="let item of order?.orders">
+        <p>{{item?.name}} x {{item?.quantity}}</p>
+      </ion-text>
+      <p>{{order?.time}}</p>
+      <!-- <ion-row>
+        <ion-col size="6">
+          <ion-button fill="outline" expand="block" color="primary" (click)="reorderItem()">REORDER</ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button fill="outline" expand="block" color="dark" (click)="getHelp()">GET HELP</ion-button>
+        </ion-col>
+      </ion-row> -->
+    </ion-label>
+  </ion-item>
+</ion-item-group>

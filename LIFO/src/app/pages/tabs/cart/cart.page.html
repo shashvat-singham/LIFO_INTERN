@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar mode="md">
+    <ion-title color="dark">Cart</ion-title>
+    <ion-buttons slot="start" *ngIf="urlCheck && urlCheck != 'tabs'">
+      <ion-back-button [defaultHref]="getPreviousUrl()"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="!model?.restaurant">
+  <app-empty-screen></app-empty-screen>
+</ion-content>
+
+<ion-content *ngIf="model?.restaurant">
+  <ion-list lines="none" class="borderBottomSmall">
+    <ion-item>
+      <ion-thumbnail slot="start">
+        <ion-img [src]="model?.restaurant?.img ? model.restaurant.img : 'https://findicons.com/files/icons/2770/ios_7_icons/128/restaurant.png'"></ion-img>
+      </ion-thumbnail>
+      <ion-label>
+        <ion-text><h4>{{model?.restaurant?.name}}</h4></ion-text>
+        <ion-note><p>{{model?.restaurant?.address}}</p><p>{{model?.restaurant?.phone}}</p></ion-note>
+      </ion-label>
+    </ion-item>
+    <app-cart-item 
+    *ngFor="let item of model?.items; let i = index"
+    [item]="item" [index]="i" (add)="quantityPlus($event)" (minus)="quantityMinus($event)">
+    </app-cart-item>
+  </ion-list>
+
+  <ion-item lines="none"  class="borderBottom">
+    <ion-icon slot="start" name="list-outline"></ion-icon>
+    <ion-input type="text" placeholder="Any instructions? We'll try our best!" [(ngModel)]="instruction"></ion-input>
+  </ion-item>
+
+  <ion-list class="borderBottom">
+    <ion-list-header>
+      <ion-label color="secondary">Bill Details</ion-label>
+    </ion-list-header>
+    <ion-item lines="none">
+      <ion-label color="dark">Item Total</ion-label>
+      <ion-text slot="end" color="dark">Rs.{{model?.totalPrice}}</ion-text>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label color="dark">Overheads</ion-label>
+      <ion-text slot="end" color="dark">Rs.{{model?.overHeads}}</ion-text>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label color="dark">To Pay</ion-label>
+      <ion-text slot="end" color="dark"><b>Rs.{{model?.grandTotal}}</b></ion-text>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer *ngIf="model?.restaurant">
+  <ion-row>
+    <ion-col size="6" (click)="scrollToBottom()">
+      <ion-item lines="none" color="light" class="ion-no-padding">
+        <ion-label>
+          <h6>Rs.{{model?.grandTotal}}</h6>
+          <ion-text color="secondary">VIEW DETAILED BILL</ion-text>
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </ion-label>
+      </ion-item>
+    </ion-col>
+    <ion-col size="6" class="ion-text-center colStyle" (click)="makePayment()">
+      <ion-button color="light" fill="clear">MAKE PAYMENT</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

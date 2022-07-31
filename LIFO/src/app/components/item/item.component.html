@@ -1,0 +1,19 @@
+<ion-item>
+  <ion-thumbnail slot="start">
+    <img [src]="item?.img ? item.img : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa1Or-t6kJ7zfcoPdwu2iXTXdfdKD93t9aDA&usqp=CAU'" />
+  </ion-thumbnail>
+  <ion-label>
+    <h4>
+      {{item?.name}}
+    </h4>
+    <ion-text><p>Rs.{{item?.price}}</p></ion-text>
+  </ion-label>
+  <ion-row *ngIf="!item?.quantity || !item?.quantity === 0" (click)="quantityPlus()">
+    <ion-text class="add" color="success">Add</ion-text>
+  </ion-row>
+  <ion-row *ngIf="item?.quantity > 0">
+    <ion-icon color="success" name="remove-outline" (click)="quantityMinus()"></ion-icon>
+    <ion-text class="ion-text-center quantity" color="success">{{item?.quantity}}</ion-text>
+    <ion-icon color="success" name="add-outline" (click)="quantityPlus()"></ion-icon>
+  </ion-row>
+</ion-item>

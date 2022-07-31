@@ -1,0 +1,19 @@
+<ion-item lines="none">
+  <ion-thumbnail slot="start">
+    <img [src]="restaurant?.img ? restaurant.img : 'https://findicons.com/files/icons/2770/ios_7_icons/128/restaurant.png' ">
+  </ion-thumbnail>
+  <ion-label>
+    <h4>{{restaurant?.name}}</h4>
+    <ion-text>
+      <p>{{restaurant.open_time}}-{{restaurant.close_time}}</p>
+    </ion-text>
+    <span *ngIf="restaurant.rating">
+      <ion-icon name="star"></ion-icon>
+      {{restaurant?.rating}}.
+    </span>
+    {{restaurant?.distance}}
+    <ion-text color="dark">
+      <p class="distance">Phone: {{restaurant?.phone}}</p>
+    </ion-text>
+  </ion-label>
+</ion-item>

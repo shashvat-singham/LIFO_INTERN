@@ -1,0 +1,26 @@
+h1{
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+p{
+    font-weight: lighter;
+    font-size: 0.9rem;
+}
+.dashedBorderBottom{
+    border-bottom: 1px solid var(--ion-color-medium);
+    padding-bottom: 1vh;
+    margin-bottom: 1vh;
+}
+.veg{
+    align-items: center;
+}
+
+ion-footer{
+    h4, p{
+        margin-left: 3%; 
+    }
+    p{
+        font-size: 0.6rem !important;
+        letter-spacing: 0.5px;
+    }
+}

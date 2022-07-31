@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "LIFO",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

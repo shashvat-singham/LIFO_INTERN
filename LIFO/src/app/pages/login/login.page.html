@@ -1,0 +1,62 @@
+<ion-content class="ion-padding">
+  <ion-avatar>
+    <ion-img src="../../../assets/logo.png"></ion-img>
+  </ion-avatar>
+
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="margin-bottom">
+    <ion-list lines="none">
+      <ion-item color="light" class="ion-margin-bottom">
+        <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+        <ion-input
+          type="text"
+          name="phone"
+          ngModel
+          #phoneCtrl="ngModel"
+          placeholder="Phone Number"
+          minlength="10"
+          maxlength="11"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="!phoneCtrl.valid && phoneCtrl.touched">
+        <p class="errMsg">*Please enter a valid phone number.</p>
+      </ion-text>
+      <ion-item color="light">
+        <ion-icon name="key" slot="start" color="primary"></ion-icon>
+        <ion-icon [name]="type ? 'eye-outline' : 'eye-off-outline' " slot="end" color="primary" (click)="changeType()"></ion-icon>
+        <ion-input
+          [type]="type ? 'password' : 'text'"
+          name="password"
+          ngModel
+          #passwordCtrl="ngModel"
+          placeholder="Password"
+          required
+          minlength="8">
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="!passwordCtrl.valid && passwordCtrl.touched">
+        <p class="errMsg">*Password must be 8 characters long.</p>
+      </ion-text>
+    </ion-list>
+    <p class="ion-text-right">Forgot Password?</p>
+    <ion-button 
+      
+      [disabled]="!f.valid"
+      expand="block" 
+      shape="round" 
+      type="submit" 
+      color="primary">SIGN IN</ion-button>
+    <!-- <ion-button 
+      *ngIf="isLogin"
+      expand="block"  
+      [disabled]="!f.valid"
+      shape="round" 
+      color="primary">
+      <ion-spinner name="crescent"></ion-spinner>
+    </ion-button> -->
+  </form>
+  <ion-text color="primary" class="ion-text-center" routerLink="/signup">
+    <p class="ion-margin-top ">Don't have an account? <b><u>Sign up</u></b></p>
+  </ion-text>
+  
+</ion-content>
