@@ -8,7 +8,7 @@
     </h4>
     <ion-text><p>Rs.{{item?.price}}</p></ion-text>
   </ion-label>
-  <ion-row *ngIf="!item?.quantity || !item?.quantity === 0" (click)="quantityPlus()">
+  <ion-row *ngIf="!item?.quantity" (click)="quantityPlus()">
     <ion-text class="add" color="success">Add</ion-text>
   </ion-row>
   <ion-row *ngIf="item?.quantity > 0">
