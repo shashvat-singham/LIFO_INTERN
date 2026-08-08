@@ -1,60 +1,86 @@
 const { User } = require("../models/user");
 const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const asyncHandler = require("../helpers/async-handler");
+const config = require("../config");
 
+const toPublicUser = (user) => {
+  const obj = user.toJSON();
+  delete obj.passwordHash;
+  return obj;
+};
 
-router.get(`/`, async (req, res) => {
-  const userList = await User.find().select('-passwordHash');
-  if (!userList) {
-    response.status(500).json({ success: false });
-  }
-  res.send(userList);
-});
+router.get(
+  `/`,
+  asyncHandler(async (req, res) => {
+    const userList = await User.find().select("-passwordHash");
+    res.send(userList);
+  })
+);
 
-router.get(`/:id`, async (req, res) => {
-  const user = await User.findById(req.params.id).select('-passwordHash');
-  if (!user) {
-    response.status(500).json({ success: false });
-  }
-  res.send(user);
-});
+router.get(
+  `/:id`,
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id).select("-passwordHash");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.send(user);
+  })
+);
 
-router.post(`/`, async (req, res) => {
-  const check = await User.findOne({ phone: req.body.phone });
-  if (check) {
-    return res.status(400).send("User with same phone number exists");
-  }
-  let user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    passwordHash: bcrypt.hashSync(req.body.password, 10),
-    user_type: req.body.user_type,
-    orders: [],
-  });
-  user = await user.save();
+router.post(
+  `/`,
+  asyncHandler(async (req, res) => {
+    const { name, phone, password } = req.body;
+    if (!name || !phone || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "name, phone and password are required" });
+    }
+    const check = await User.findOne({ phone });
+    if (check) {
+      return res
+        .status(409)
+        .json({ success: false, message: "User with same phone number exists" });
+    }
+    const user = await new User({
+      name,
+      email: req.body.email,
+      phone,
+      passwordHash: bcrypt.hashSync(password, 10),
+      user_type: req.body.user_type,
+      orders: [],
+    }).save();
 
-  if(!user)
-    return res.status(400).send('The user cannot be created');
+    res.status(201).send(toPublicUser(user));
+  })
+);
 
-  res.send(user);
-});
-
-router.post(`/login`, async (req, res) => {
-  const user = await User.findOne({
-    phone: req.body.phone
-  });
-  console.log(user);
-  if (!user) {
-    return res.status(400).send({message: "User not Found"});
-  }
-  if(user && bcrypt.compareSync(req.body.password,user.passwordHash)){
-    return res.status(201).send(JSON.parse(JSON.stringify(user)))
-  } else {
-    return res.status(400).send({message:'Incorrect Password'})
-  }
-});
+router.post(
+  `/login`,
+  asyncHandler(async (req, res) => {
+    const { phone, password } = req.body;
+    if (!phone || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "phone and password are required" });
+    }
+    const user = await User.findOne({ phone });
+    if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid phone number or password" });
+    }
+    const token = jwt.sign(
+      { userId: user.id, user_type: user.user_type },
+      config.jwtSecret,
+      { expiresIn: "7d" }
+    );
+    res.status(201).send({ ...toPublicUser(user), token });
+  })
+);
 
 module.exports = router;

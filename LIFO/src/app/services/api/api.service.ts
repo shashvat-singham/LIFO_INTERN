@@ -3,13 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { Restaurant } from 'src/app/models/restaurant.model';
 import { Dish } from 'src/app/models/dish.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  endpoint = 'https://lifo-app.herokuapp.com/api/v1/'
+  endpoint = environment.apiUrl;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -64,9 +65,9 @@ export class ApiService {
 
 
   banners = [
-    {banner:'https://1000logos.net/wp-content/uploads/2017/06/Subway-logo-500x278.png'},
-    {banner:'https://1000logos.net/wp-content/uploads/2017/03/Kfc_logo-500x281.png'},
-    {banner:'https://1000logos.net/wp-content/uploads/2016/12/Starbucks-Logo-500x417.png'}
+    {banner:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=70'},
+    {banner:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1000&q=70'},
+    {banner:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1000&q=70'}
   ];
   restaurants = [
     {

@@ -1,0 +1,8 @@
+node_modules
+www
+android
+e2e
+.angular
+npm-debug.log
+Dockerfile
+.dockerignore

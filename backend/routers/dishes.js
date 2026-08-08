@@ -1,122 +1,115 @@
 const { Dish } = require("../models/dish");
 const express = require("express");
-const { response } = require("express");
-const { Restaurant } = require("../models/restaurant");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
+const asyncHandler = require("../helpers/async-handler");
 
 const FILE_TYPE_MAP = {
-  'image/png': 'png',
-  'image/jpeg': 'jpeg',
-  'image/jpg': 'jpg',
-}
+  "image/png": "png",
+  "image/jpeg": "jpeg",
+  "image/jpg": "jpg",
+};
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb){
+  destination: function (req, file, cb) {
     const isValid = FILE_TYPE_MAP[file.mimetype];
-    let uploadError = new Error('invalid image type');
-    if(isValid){
-      uploadError = null;
-    }
-    cb(uploadError, 'public/uploads')
+    cb(isValid ? null : new Error("Invalid image type"), "public/uploads");
   },
-  filename: function(req, file, cb){
-    const fileName = file.originalname.split(' ').join('-');
+  filename: function (req, file, cb) {
+    const fileName = file.originalname.split(" ").join("-");
     const extension = FILE_TYPE_MAP[file.mimetype];
-    cb(null, `${fileName}-${Date.now()}.${extension}`)
-  }
-})
-
-const uploadOptions = multer({storage: storage})
-
-router.get(`/`, async (req, res) => {
-  let filter = {};
-  console.log(req.query.id);
-  if (req.query.id) {
-    filter = { restaurant: req.query.id};
-  }
-  const dishList = await Dish.find(filter); //.populate('restaurant');      // .select('name');
-  if (!dishList) {
-    response.status(500).json({ success: false });
-  }
-  res.status(200).send(dishList);
+    cb(null, `${fileName}-${Date.now()}.${extension}`);
+  },
 });
 
-router.get(`/?id`, async (req, res) => {
-  if (!mongoose.isValidObjectId(req.params.id))
-    return res.status(400).send("Invalid Dish");
-  console.log(req.params);
-  const dish = await Dish.find({restaurant: req.params.id});
-  if (!dish) {
-    response.status(500).json({ message: "Dish not Found" });
-  }
-  res.status(200).send(dish);
+const uploadOptions = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-router.get(`/get/top/`, async (req, res) => {
-  //router.get(`/get/top/:count`, async (req,res) => {
-  // const count = req.params.count ? req.params.count : 0;
-  const dish = await Dish.find({ featured: true }); //.limit(+count);
-  if (!dish) res.status(500).json({ success: false });
-  res.send(dish);
-});
+router.get(
+  `/`,
+  asyncHandler(async (req, res) => {
+    let filter = {};
+    if (req.query.id) {
+      if (!mongoose.isValidObjectId(req.query.id)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid restaurant id" });
+      }
+      filter = { restaurant: req.query.id };
+    }
+    const dishList = await Dish.find(filter);
+    res.status(200).send(dishList);
+  })
+);
 
-router.post(`/`, uploadOptions.single('img') , async (req, res) => {
-  // let restaurant = await Restaurant.findById(req.body.restaurant);
-  // if (!restaurant) return res.status(400).send("Invalid Restaurant");
-  // const imgfile = req.file
-  // if (!imgfile) return res.status(400).send("No file in request");
-  // const fileName = req.file.filename
-  // const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
-  let dish = new Dish({
-    name: req.body.name,
-    restaurant: req.body.restaurant,
-    img: req.body.img,
-    price: req.body.price,
-    veg: req.body.veg,
-    prep_time: req.body.prep_time,
-    featured: req.body.featured,
-  });
-  dish = await dish.save();
-  if (!dish) return res.status(500).send("The dish cannot be added");
-  res.send(dish);
-});
+router.get(
+  `/get/top`,
+  asyncHandler(async (req, res) => {
+    const dishes = await Dish.find({ featured: true });
+    res.send(dishes);
+  })
+);
 
-router.put(`/:id`, async (req, res) => {
-  // let restaurant = await Restaurant.findById(req.body.restaurant);
-  // if (!restaurant) return res.status(400).send("Invalid Restaurant");
-  // if (!mongoose.isValidObjectId(req.params.id))
-  //   return res.status(400).send("Invalid Dish");
-  const dish = await Dish.findByIdAndUpdate(
-    req.params.id,
-    {
+router.post(
+  `/`,
+  uploadOptions.single("img"),
+  asyncHandler(async (req, res) => {
+    const img = req.file
+      ? `${req.protocol}://${req.get("host")}/public/uploads/${req.file.filename}`
+      : req.body.img;
+    const dish = await new Dish({
       name: req.body.name,
       restaurant: req.body.restaurant,
+      img,
       price: req.body.price,
       veg: req.body.veg,
       prep_time: req.body.prep_time,
       featured: req.body.featured,
-    },
-    { new: true }
-  );
-  if (!dish) return res.status(400).send("Dish cannot be found");
-  res.status(200).send(dish);
-});
+    }).save();
+    res.status(201).send(dish);
+  })
+);
 
-router.delete(`/:id`, (req, res) => {
-  if (!mongoose.isValidObjectId(req.params.id))
-    return res.status(400).send("Invalid Dish");
-  Dish.findByIdAndRemove(req.params.id)
-    .then((dish) => {
-      if (dish) {
-        return res.status(200).json({ success: true, message: "Dish deleted" });
-      } else
-        res.status(404).json({ success: false, message: "Dish not Found" });
-    })
-    .catch((err) => {
-      return res.status(400).json({ success: false, error: err });
-    });
-});
+router.put(
+  `/:id`,
+  asyncHandler(async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid dish id" });
+    }
+    const dish = await Dish.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: req.body.name,
+        restaurant: req.body.restaurant,
+        price: req.body.price,
+        veg: req.body.veg,
+        prep_time: req.body.prep_time,
+        featured: req.body.featured,
+      },
+      { new: true }
+    );
+    if (!dish) {
+      return res.status(404).json({ success: false, message: "Dish not found" });
+    }
+    res.status(200).send(dish);
+  })
+);
+
+router.delete(
+  `/:id`,
+  asyncHandler(async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid dish id" });
+    }
+    const dish = await Dish.findByIdAndRemove(req.params.id);
+    if (!dish) {
+      return res.status(404).json({ success: false, message: "Dish not found" });
+    }
+    res.status(200).json({ success: true, message: "Dish deleted" });
+  })
+);
 
 module.exports = router;
